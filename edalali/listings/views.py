@@ -4,6 +4,7 @@ from .forms import ListingForm, ListingImageFormSet
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.utils import timezone 
 
 def listing_list(request):
     listings = Listing.objects.filter(is_available=True)  # Show only available listings
@@ -11,7 +12,9 @@ def listing_list(request):
 
 def listing_detail(request, slug):
     listing = get_object_or_404(Listing, slug=slug)
-    return render(request, 'listings/listing_detail.html', {'listing': listing})
+    today = timezone.now().date()  # Get today's date
+    return render(request, 'listings/listing_detail.html', {'listing': listing, 'today': today})
+
 
 @login_required
 @transaction.atomic # Wrap in a transaction for data consistency
