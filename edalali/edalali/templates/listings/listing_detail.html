@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ listing.title }}</h2>
+<p>Price: ${{ listing.price_per_night }}</p>
+<p>Description: {{ listing.description }}</p>
+<p>Location: {{ listing.location.city }}, {{ listing.location.state }}</p>
+
+{% if listing.images.all %}
+    <h3>Images</h3>
+    {% for image in listing.images.all %}
+        <img src="{{ image.image.url }}" alt="Listing Image" width="200">
+    {% endfor %}
+{% endif %}
+{% if user.is_authenticated and user == listing.host %}
+ <a href="{% url 'edit_listing' listing.slug %}">Edit Listing</a>
+{% endif %}
+ {% if user.is_authenticated and user != listing.host %}
+        <a href="{% url 'create_booking' listing.slug %}">Book this Listing</a>
+    {% endif %}
+{% endblock %}

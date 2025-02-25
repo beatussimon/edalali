@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Listings</h2>
+<ul>
+    {% for listing in listings %}
+    <li>
+        <a href="{% url 'listing_detail' listing.slug %}">{{ listing.title }}</a> - ${{ listing.price_per_night }}
+    </li>
+    {% empty %}
+    <li>No listings available.</li>
+    {% endfor %}
+</ul>
+{% if user.is_authenticated %}
+<a href ="{% url 'create_listing' %}">Create listing</a>
+{% endif %}
+{% endblock %}
