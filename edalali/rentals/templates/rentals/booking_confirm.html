@@ -1,0 +1,16 @@
+{% extends 'rentals/base.html' %}
+{% load bootstrap5 %}
+
+{% block title %}Confirm Action{% endblock %}
+
+{% block content %}
+<h2>Confirm {{ action|capfirst }}</h2>
+
+<p>Are you sure you want to {{ action }} your booking for <strong>{{ booking.listing.title }}</strong> from {{ booking.check_in_date }} to {{ booking.check_out_date }}?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirm {{ action|capfirst }}</button>
+    <a href="{% url 'my_bookings' %}" class="btn btn-secondary">Go Back</a>
+</form>
+{% endblock %}

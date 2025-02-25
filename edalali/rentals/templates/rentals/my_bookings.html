@@ -1,0 +1,50 @@
+{% extends 'rentals/base.html' %}
+ {% load bootstrap5 %}
+{% block title %}My Bookings{% endblock %}
+
+{% block content %}
+<h2>My Bookings</h2>
+
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% if bookings %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Listing</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Guests</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td><a href="{% url 'listing_detail' booking.listing.slug %}">{{ booking.listing.title }}</a></td>
+                <td>{{ booking.check_in_date }}</td>
+                <td>{{ booking.check_out_date }}</td>
+                <td>{{ booking.num_guests }}</td>
+                <td>${{ booking.total_price }}</td>
+                <td>{% if booking.is_confirmed %}Confirmed{% else %}Pending{% endif %}</td>
+                <td>
+                 <a href="{% url 'booking_detail' booking.id %}" class = "btn btn-info btn-sm">View</a>
+                 {% if booking.is_confirmed == False and booking.check_in_date > today %}
+                    <a href="{% url 'cancel_booking' booking.id %}" class = "btn btn-danger btn-sm">Cancel</a>
+                 {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You have no bookings.</p>
+{% endif %}
+{% endblock %}

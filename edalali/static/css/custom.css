@@ -1,0 +1,22 @@
+/* static/css/custom.css */
+body {
+    font-family: sans-serif;
+}
+
+.listing-image {
+    max-height: 200px;
+    object-fit: cover; /* Ensure images cover the space without distortion */
+}
+
+.message.sent {
+    background-color: #dcf8c6; /* Light green for sent messages */
+    margin-left: 50px; /* Indent sent messages */
+}
+
+.message.received {
+    background-color: #fff; /* White for received messages */
+    margin-right: 50px; /* Indent received messages */
+}
+.navbar{
+    margin-bottom: 2rem;
+}
