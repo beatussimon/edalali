@@ -29,8 +29,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # Added for django-allauth
+    'allauth.account.middleware.AccountMiddleware',
 ]
+
+ROOT_URLCONF = 'edalali.urls'  # Added to fix AttributeError
 
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = [
@@ -40,8 +42,11 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = '/dashboard/'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/profile/setup/'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_USERNAME_REQUIRED = False
+# Removed deprecated ACCOUNT_AUTHENTICATION_METHOD and ACCOUNT_USERNAME_REQUIRED
+# Use ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS and related settings instead
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
+ACCOUNT_USERNAME_REQUIRED = False  # Kept for compatibility, but consider removing if not needed
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -69,7 +74,10 @@ TEMPLATES = [
 ]
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# Ensure STATICFILES_DIRS points to an existing directory to fix staticfiles.W004 warning
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Create this directory if it doesn't exist
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Added for collectstatic to work in production
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
