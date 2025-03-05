@@ -19,5 +19,122 @@ from django.contrib import admin
 from django.urls import path
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-]
+tterns = [
+ns = [
+tterns = [
+
+tterns = [
+ns = [
+tterns = [
+ = [
+
+tterns = [
+ns = [
+tterns = [
+s = [
+ = [
+
+tterns = [
+ns = [
+tterns = [
+ns = [
+s = [
+ = [
+
+
+
+
+
+
+
+= [
+
+
+
+
+
+
+
+
+
+= [
+
+
+
+
+
+
+
+
+
+
+
+= [
+
+
+
+
+
+
+
+
+
+
+
+
+
+= [
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+= [
+
+
+
+
+
+
+
+ns = [
+= [
+tterns = [
+ns = [
+s = [
+ = [
+
+tterns = [
+ns = [
+tterns = [
+ = [
+= [
+tterns = [
+ns = [
+s = [
+ = [
+
+tterns = [
+ns = [
+tterns = [
+ = [
+ = [
+= [
+tterns = [
+ns = [
+s = [
+ = [
+
+tterns = [
+ns = [
+tterns = [
