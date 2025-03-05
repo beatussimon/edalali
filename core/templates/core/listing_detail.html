@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ listing.title }}{% endblock %}
+{% block content %}
+    <h1>{{ listing.title }}</h1>
+    <p>{{ listing.description }}</p>
+    <p><strong>Price:</strong> ${{ listing.price_per_day }}/day</p>
+    <p><strong>Location:</strong> {{ listing.location }}</p>
+    <p><strong>Type:</strong> {{ listing.rental_type|title }}</p>
+    {% if listing.instant_book %}
+        <span class="badge bg-success">Instant Book</span>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'book_listing' listing.pk %}" class="btn btn-primary mt-2">Book Now</a>
+    {% else %}
+        <a href="{% url 'account_login' %}" class="btn btn-primary mt-2">Login to Book</a>
+    {% endif %}
+{% endblock %}

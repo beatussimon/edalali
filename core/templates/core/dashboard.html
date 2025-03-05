@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h1>Dashboard</h1>
+    <h3>Welcome, {{ user.email }}</h3>
+    <p><strong>User Type:</strong> {{ profile.user_type|title }}</p>
+    <p><strong>Phone:</strong> {{ profile.phone_number|default:'Not set' }}</p>
+    <p><strong>Address:</strong> {{ profile.address|default:'Not set' }}</p>
+
+    {% if profile.user_type == 'business' %}
+        <h2>Your Listings</h2>
+        <div class="row">
+            {% for listing in owned_listings %}
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p><strong>${{ listing.price_per_day }}/day</strong></p>
+                            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>You haven’t created any listings yet.</p>
+            {% endfor %}
+        </div>
+        <h2>Bookings Received</h2>
+        <p><strong>Total Revenue:</strong> ${{ total_revenue }}</p>
+        <ul class="list-group mb-4">
+            {% for booking in bookings_received %}
+                <li class="list-group-item">
+                    {{ booking.listing.title }} - {{ booking.renter.email }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }})
+                </li>
+            {% empty %}
+                <li class="list-group-item">No bookings received yet.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <h2>Your Bookings</h2>
+    <ul class="list-group mb-4">
+        {% for booking in bookings_made %}
+            <li class="list-group-item">
+                {{ booking.listing.title }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }})
+            </li>
+        {% empty %}
+            <li class="list-group-item">You haven’t made any bookings yet.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'create_listing' %}" class="btn btn-primary">Create New Listing</a>
+{% endblock %}
