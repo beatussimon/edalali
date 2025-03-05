@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block title %}Book {{ listing.title }}{% endblock %}
+{% block content %}
+    <h1>Book {{ listing.title }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">End Date</label>
+            <input type="date" name="end_date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Confirm Booking</button>
+    </form>
+{% endblock %}
