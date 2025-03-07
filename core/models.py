@@ -40,7 +40,6 @@ class Listing(models.Model):
     location = models.CharField(max_length=200)
     is_available = models.BooleanField(default=True)
     instant_book = models.BooleanField(default=False)
-    images = models.ManyToManyField('ListingImage', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -52,13 +51,20 @@ class Listing(models.Model):
         return self.title
 
 class ListingImage(models.Model):
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='listings/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.listing.title}"
 
 class Availability(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='availability')
     start_date = models.DateField()
     end_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.listing.title}: {self.start_date} to {self.end_date}"
 
 class Booking(models.Model):
     STATUS_CHOICES = (
@@ -80,6 +86,9 @@ class Booking(models.Model):
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='unpaid')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Booking for {self.listing.title} by {self.renter.username}"
+
 class Profile(models.Model):
     USER_TYPES = (
         ('individual', 'Individual'),
@@ -91,6 +100,9 @@ class Profile(models.Model):
     address = models.TextField(blank=True)
     is_verified = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
 class Review(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='review')
     rating = models.IntegerField(validators=[MinValueValidator(1)], choices=[(i, i) for i in range(1, 6)])
@@ -98,7 +110,7 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Review for {self.booking.listing.title} by {self.booking.renter.email}"
+        return f"Review for {self.booking.listing.title} by {self.booking.renter.username}"
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
@@ -109,4 +121,4 @@ class Message(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"From {self.sender.email} to {self.recipient.email} about {self.listing.title}"
+        return f"From {self.sender.username} to {self.recipient.username} about {self.listing.title}"

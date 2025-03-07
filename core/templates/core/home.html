@@ -2,33 +2,37 @@
 {% block title %}Home{% endblock %}
 {% block content %}
     <!-- Hero Section -->
-    <div class="bg-primary text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+    <div class="bg-primary text-white text-center py-5 py-md-6 mb-5" 
+         style="background: linear-gradient(135deg, #ff5a5f, #e04e53);" data-aos="zoom-in">
         <div class="container">
-            <h1 class="display-4 fw-bold">Welcome to Edalali</h1>
-            <p class="lead mb-4">Rent anything, anytime, anywhere—your ultimate rental marketplace.</p>
-            <a href="{% url 'listing_list' %}" class="btn btn-light btn-lg">Explore Listings</a>
+            <h1 class="display-3 fw-bold mb-3">Welcome to Edalali</h1>
+            <p class="lead mb-4 fs-4">Rent anything, anytime, anywhere—your ultimate rental marketplace.</p>
+            <a href="{% url 'listing_list' %}" class="btn btn-light btn-lg px-5">Explore Listings</a>
         </div>
     </div>
 
     <!-- Value Proposition -->
-    <div class="container text-center mb-5">
-        <h2 class="mb-4">Why Choose Edalali?</h2>
-        <div class="row">
+    <div class="container text-center mb-5" data-aos="fade-up">
+        <h2 class="fs-2 fw-bold mb-5">Why Choose Edalali?</h2>
+        <div class="row g-4">
             <div class="col-md-4">
-                <div class="card p-3">
-                    <h5 class="card-title">Wide Variety</h5>
+                <div class="card p-4 h-100">
+                    <i class="fas fa-th-large fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title fw-semibold">Wide Variety</h5>
                     <p class="card-text">From properties to equipment, find it all in one place.</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card p-3">
-                    <h5 class="card-title">Flexible Pricing</h5>
+                <div class="card p-4 h-100">
+                    <i class="fas fa-clock fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title fw-semibold">Flexible Pricing</h5>
                     <p class="card-text">Rent by the hour, day, week, month, or year.</p>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card p-3">
-                    <h5 class="card-title">Easy Booking</h5>
+                <div class="card p-4 h-100">
+                    <i class="fas fa-check-circle fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title fw-semibold">Easy Booking</h5>
                     <p class="card-text">Instant bookings or message listers directly.</p>
                 </div>
             </div>
@@ -36,46 +40,43 @@
     </div>
 
     <!-- Featured Listings Preview -->
-    <div class="container">
-        <h2 class="text-center mb-4">Featured Listings</h2>
-        <div class="row">
+    <div class="container mb-5" data-aos="fade-up" data-aos-delay="100">
+        <h2 class="text-center fs-2 fw-bold mb-5">Featured Listings</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for listing in featured_listings %}
-                <div class="col-md-4 mb-4">
+                <div class="col">
                     <div class="card h-100">
                         {% if listing.images.all %}
-                            <img src="{{ listing.images.first.image.url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 200px; object-fit: cover;">
+                            <div class="image-container image-container--medium">
+                                <img src="{{ listing.images.first.image.url }}" 
+                                     class="card-img-top" alt="{{ listing.title }}" loading="lazy">
+                            </div>
                         {% else %}
-                            <div class="card-img-top bg-secondary" style="height: 200px;"></div>
+                            <div class="image-container image-container--medium bg-secondary text-center d-flex align-items-center justify-content-center">
+                                <span class="text-muted">No Image</span>
+                            </div>
                         {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ listing.title }}</h5>
-                            <p class="card-text">{{ listing.description|truncatewords:15 }}</p>
-                            <p><strong>${{ listing.price }} {{ listing.pricing_unit }}</strong></p>
-                            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary">View Details</a>
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold mb-2 text-truncate">{{ listing.title }}</h5>
+                            <p class="card-text small mb-3" style="max-height: 60px; overflow: hidden;">
+                                {{ listing.description|truncatewords:15 }}
+                            </p>
+                            <p class="card-text fw-semibold mb-3">
+                                <i class="fas fa-coins me-1 text-success"></i>
+                                TSh {{ listing.price|floatformat:0|intcomma }}/{{ listing.pricing_unit }}
+                            </p>
+                            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary w-100">View Details</a>
                         </div>
                     </div>
                 </div>
             {% empty %}
-                <p class="text-center">No featured listings yet. Check back soon!</p>
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted fs-4">No featured listings yet. Check back soon!</p>
+                </div>
             {% endfor %}
         </div>
-        <div class="text-center">
-            <a href="{% url 'listing_list' %}" class="btn btn-outline-primary">See All Listings</a>
+        <div class="text-center mt-4">
+            <a href="{% url 'listing_list' %}" class="btn btn-outline-primary btn-lg">See All Listings</a>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3 mt-5">
-        <div class="container">
-            <p>&copy; 2025 Edalali. All rights reserved.</p>
-            <a href="{% url 'listing_list' %}" class="text-white">Listings</a> |
-            {% if user.is_authenticated %}
-                <a href="{% url 'dashboard' %}" class="text-white">Dashboard</a> |
-                <a href="{% url 'logout' %}" class="text-white">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="text-white">Login</a> |
-                <a href="{% url 'signup' %}" class="text-white">Sign Up</a>
-            {% endif %}
-        </div>
-    </footer>
 {% endblock %}

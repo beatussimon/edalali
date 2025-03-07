@@ -1,17 +1,43 @@
 {% extends 'core/base.html' %}
 {% block title %}Set Availability for {{ listing.title }}{% endblock %}
 {% block content %}
-    <h1>Set Availability for {{ listing.title }}</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Start Date</label>
-            <input type="date" name="start_date" class="form-control" required>
+    <section class="container py-5" data-aos="fade-up">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h1 class="fs-3 fw-bold mb-0">Set Availability for {{ listing.title }}</h1>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="start_date" class="form-label fw-medium">Start Date</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="end_date" class="form-label fw-medium">End Date</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-4">Add Availability</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">End Date</label>
-            <input type="date" name="end_date" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Add Availability</button>
-    </form>
+    </section>
+
+    <script>
+        document.querySelectorAll('.needs-validation').forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    </script>
 {% endblock %}

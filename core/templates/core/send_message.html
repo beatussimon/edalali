@@ -1,14 +1,38 @@
 {% extends 'core/base.html' %}
 {% block title %}Message about {{ listing.title }}{% endblock %}
 {% block content %}
-    <h1>Send a Message about {{ listing.title }}</h1>
-    <p><strong>To:</strong> {{ listing.owner.email }}</p>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Message</label>
-            <textarea name="content" class="form-control" required></textarea>
+    <section class="container py-5" data-aos="fade-up">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h1 class="fs-3 fw-bold mb-0">Message about {{ listing.title }}</h1>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <p class="mb-4"><strong>To:</strong> {{ listing.owner.username }}</p>
+                        <form method="POST" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="content" class="form-label fw-medium">Message</label>
+                                <textarea name="content" id="content" class="form-control" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Send Message</button>
-    </form>
+    </section>
+
+    <script>
+        document.querySelectorAll('.needs-validation').forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    </script>
 {% endblock %}

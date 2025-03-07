@@ -1,14 +1,20 @@
 {% extends 'core/base.html' %}
 {% block title %}Logged Out{% endblock %}
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card p-4 text-center">
-                <h2 class="mb-4">Logged Out</h2>
-                <p>You have been successfully logged out.</p>
-                <a href="{% url 'login' %}" class="btn btn-primary">Log In Again</a>
-                <a href="{% url 'home' %}" class="btn btn-secondary mt-2">Back to Home</a>
+    <section class="container py-5" data-aos="fade-up">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-lg text-center">
+                    <div class="card-header bg-secondary text-white py-3">
+                        <h2 class="fs-3 fw-bold mb-0">Logged Out</h2>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <p class="fs-5 mb-4">You have been successfully logged out.</p>
+                        <a href="{% url 'login' %}" class="btn btn-primary w-100 mb-3">Log In Again</a>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary w-100">Back to Home</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 {% endblock %}

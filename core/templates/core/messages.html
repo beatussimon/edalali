@@ -1,23 +1,51 @@
 {% extends 'core/base.html' %}
 {% block title %}Messages{% endblock %}
 {% block content %}
-    <h1>Your Messages</h1>
-    <h2>Sent Messages</h2>
-    <ul class="list-group mb-4">
-        {% for message in sent_messages %}
-            <li class="list-group-item">
-                To {{ message.recipient.email }} about {{ message.listing.title }}: {{ message.content }} ({{ message.created_at }})
-            </li>
-        {% empty %}
-            <li class="list-group-item">No sent messages.</li>
-        {% endfor %}
-    </ul>
-    <h2>Received Messages</h2>
-    <ul class="list-group mb-4">
-        {% for message in received_messages %}
-            <li class="list-group-item {% if not message.is_read %}fw-bold{% endif %}">
-                From {{ message.sender.email }} about {{ message.listing.title }}: {{ message.content }} ({{ message.created_at }})
-            </li>
-        {% endfor %}
-    </ul>
+    <section class="container py-5" data-aos="fade-up">
+        <h1 class="display-5 fw-bold mb-5" style="color: var(--primary);">Your Messages</h1>
+        <div class="row">
+            <div class="col-md-6 mb-5">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-secondary text-white p-3">
+                        <h2 class="fs-4 mb-0">Sent Messages</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <ul class="list-group list-group-flush">
+                            {% for message in sent_messages %}
+                                <li class="list-group-item py-3">
+                                    <strong>To:</strong> {{ message.recipient.username }}<br>
+                                    <small>About: <a href="{% url 'listing_detail' message.listing.pk %}" class="text-primary">{{ message.listing.title }}</a></small><br>
+                                    <p class="mt-2">{{ message.content }}</p>
+                                    <small class="text-muted">{{ message.created_at|date:"M d, Y H:i" }}</small>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center py-4">No sent messages.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-5">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-secondary text-white p-3">
+                        <h2 class="fs-4 mb-0">Received Messages</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <ul class="list-group list-group-flush">
+                            {% for message in received_messages %}
+                                <li class="list-group-item py-3 {% if not message.is_read %}fw-bold bg-light{% endif %}">
+                                    <strong>From:</strong> {{ message.sender.username }}<br>
+                                    <small>About: <a href="{% url 'listing_detail' message.listing.pk %}" class="text-primary">{{ message.listing.title }}</a></small><br>
+                                    <p class="mt-2">{{ message.content }}</p>
+                                    <small class="text-muted">{{ message.created_at|date:"M d, Y H:i" }}</small>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center py-4">No received messages.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

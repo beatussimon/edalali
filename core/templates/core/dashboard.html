@@ -1,89 +1,206 @@
 {% extends 'core/base.html' %}
+{% load humanize %}
+
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-    <h1 class="mb-4">Dashboard</h1>
-    <div class="card p-4 mb-4">
-        <h3>Welcome, {{ user.username }}</h3>
-        <p><strong>User Type:</strong> {{ profile.user_type|title }}</p>
-        <p><strong>Phone:</strong> {{ profile.phone_number|default:'Not set' }}</p>
-        <p><strong>Address:</strong> {{ profile.address|default:'Not set' }}</p>
-        <a href="{% url 'profile_setup' %}" class="btn btn-secondary">Edit Profile</a>
-        <a href="{% url 'messages' %}" class="btn btn-info ms-2">View Messages</a>
-    </div>
+    <section class="container-fluid py-5" data-aos="fade-up">
+        <header class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-5 gap-3">
+            <h1 class="display-5 fw-bold" style="color: var(--primary);">Dashboard</h1>
+            <a href="{% url 'create_listing' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create New Listing
+            </a>
+        </header>
 
-    {% if profile.user_type == 'business' %}
-        <h2>Your Listings</h2>
-        <div class="row mb-4">
-            {% for listing in owned_listings %}
+        <!-- Profile Card -->
+        <div class="card mb-5 shadow-lg" data-aos="fade-up" data-aos-delay="100">
+            <div class="card-header bg-primary text-white d-flex flex-column flex-md-row justify-content-between align-items-center p-4">
+                <h3 class="mb-0">Welcome, {{ user.username|title }}</h3>
+                <span class="badge bg-light text-dark mt-2 mt-md-0">{{ profile.user_type|title }}</span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <p><i class="fas fa-phone me-2 text-muted"></i><strong>Phone:</strong> {{ profile.phone_number|default:'Not set' }}</p>
+                        <p><i class="fas fa-map-marker-alt me-2 text-muted"></i><strong>Address:</strong> {{ profile.address|default:'Not set' }}</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="{% url 'profile_setup' %}" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-edit me-1"></i>Edit Profile
+                        </a>
+                        <a href="{% url 'messages' %}" class="btn btn-outline-info">
+                            <i class="fas fa-envelope me-1"></i>Messages
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Overview (Business Users Only) -->
+        {% if profile.user_type == 'business' %}
+            <div class="row g-4 mb-5" data-aos="fade-up" data-aos-delay="200">
                 <div class="col-md-4">
-                    <div class="card mb-4">
-                        {% if listing.images.all %}
-                            <img src="{{ listing.images.first.image.url }}" class="card-img-top" alt="{{ listing.title }}">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ listing.title }}</h5>
-                            <p><strong>${{ listing.price }} {{ listing.pricing_unit }}</strong></p>
-                            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary">View</a>
-                            <a href="{% url 'set_availability' listing.pk %}" class="btn btn-secondary mt-2">Set Availability</a>
+                    <div class="card text-center bg-light h-100">
+                        <div class="card-body p-4">
+                            <i class="fas fa-money-bill-wave fa-3x mb-3 text-success"></i>
+                            <h5 class="card-title">Total Revenue</h5>
+                            <p class="card-text fw-bold fs-3">TSh {{ total_revenue|floatformat:0|intcomma }}</p>
                         </div>
                     </div>
                 </div>
-            {% empty %}
-                <p>You haven’t created any listings yet.</p>
-            {% endfor %}
-        </div>
-        <h2>Bookings Received</h2>
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Total Revenue</h5>
-                        <p class="card-text">${{ total_revenue }}</p>
+                <div class="col-md-4">
+                    <div class="card text-center bg-light h-100">
+                        <div class="card-body p-4">
+                            <i class="fas fa-calendar-check fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Total Bookings</h5>
+                            <p class="card-text fw-bold fs-3">{{ total_bookings }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center bg-light h-100">
+                        <div class="card-body p-4">
+                            <i class="fas fa-hourglass-half fa-3x mb-3 text-warning"></i>
+                            <h5 class="card-title">Pending Bookings</h5>
+                            <p class="card-text fw-bold fs-3">{{ pending_bookings }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Total Bookings</h5>
-                        <p class="card-text">{{ total_bookings }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5>Pending Bookings</h5>
-                        <p class="card-text">{{ pending_bookings }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <ul class="list-group mb-4">
-            {% for booking in bookings_received %}
-                <li class="list-group-item">
-                    {{ booking.listing.title }} - {{ booking.renter.username }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }} - {{ booking.payment_status }})
-                </li>
-            {% empty %}
-                <li class="list-group-item">No bookings received yet.</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% endif %}
 
-    <h2>Your Bookings</h2>
-    <ul class="list-group mb-4">
-        {% for booking in bookings_made %}
-            <li class="list-group-item">
-                {{ booking.listing.title }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }} - {{ booking.payment_status }})
-                {% if booking.payment_status == 'unpaid' %}
-                    <a href="{% url 'pay_booking' booking.pk %}" class="btn btn-sm btn-success ms-2">Pay Now</a>
-                {% elif booking.status == 'confirmed' and booking.payment_status == 'paid' and not booking.review.exists %}
-                    <a href="{% url 'leave_review' booking.pk %}" class="btn btn-sm btn-info ms-2">Leave Review</a>
-                {% endif %}
-            </li>
-        {% empty %}
-            <li class="list-group-item">You haven’t made any bookings yet.</li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'create_listing' %}" class="btn btn-primary">Create New Listing</a>
+        <!-- Owned Listings (Business Users Only) -->
+        {% if profile.user_type == 'business' %}
+            <div class="card mb-5 shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center p-4" 
+                     data-bs-toggle="collapse" data-bs-target="#ownedListings" role="button" aria-expanded="true" aria-controls="ownedListings">
+                    <h2 class="mb-0 fs-4">Your Listings</h2>
+                    <i class="fas fa-chevron-down transition-transform" id="ownedListingsChevron"></i>
+                </div>
+                <div class="collapse show" id="ownedListings">
+                    <div class="card-body p-4">
+                        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                            {% for listing in owned_listings %}
+                                <div class="col">
+                                    <div class="card h-100">
+                                        {% if listing.images.all %}
+                                            <div class="image-container image-container--small">
+                                                <img src="{{ listing.images.first.image.url }}" 
+                                                     class="card-img-top" alt="{{ listing.title }}" loading="lazy">
+                                            </div>
+                                        {% else %}
+                                            <div class="image-container image-container--small bg-secondary text-center d-flex align-items-center justify-content-center">
+                                                <span class="text-muted small">No Image</span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title fw-bold mb-2 text-truncate">{{ listing.title }}</h6>
+                                            <p class="card-text small mb-2">
+                                                <i class="fas fa-coins me-1 text-success"></i>
+                                                TSh {{ listing.price|floatformat:0|intcomma }}/{{ listing.pricing_unit }}
+                                            </p>
+                                            <div class="d-flex flex-column flex-md-row gap-2">
+                                                <a href="{% url 'listing_detail' listing.pk %}" 
+                                                   class="btn btn-primary btn-sm flex-grow-1">
+                                                    <i class="fas fa-eye me-1"></i>View
+                                                </a>
+                                                <a href="{% url 'set_availability' listing.pk %}" 
+                                                   class="btn btn-outline-secondary btn-sm flex-grow-1">
+                                                    <i class="fas fa-calendar me-1"></i>Availability
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% empty %}
+                                <div class="col-12 text-center py-4">
+                                    <p class="text-muted fs-5">You haven’t created any listings yet.</p>
+                                    <a href="{% url 'create_listing' %}" class="btn btn-primary">Get Started</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Received -->
+            <div class="card mb-5 shadow-lg" data-aos="fade-up" data-aos-delay="400">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center p-4" 
+                     data-bs-toggle="collapse" data-bs-target="#bookingsReceived" role="button" aria-expanded="true" aria-controls="bookingsReceived">
+                    <h2 class="mb-0 fs-4">Bookings Received</h2>
+                    <i class="fas fa-chevron-down transition-transform" id="bookingsReceivedChevron"></i>
+                </div>
+                <div class="collapse show" id="bookingsReceived">
+                    <div class="card-body p-4">
+                        <ul class="list-group list-group-flush">
+                            {% for booking in bookings_received %}
+                                <li class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 py-3">
+                                    <div>
+                                        <strong class="fs-6">{{ booking.listing.title }}</strong> - {{ booking.renter.username }}<br>
+                                        <small>{{ booking.start_date|date:"M d, Y" }} to {{ booking.end_date|date:"M d, Y" }} - TSh {{ booking.total_price|floatformat:0|intcomma }}</small>
+                                    </div>
+                                    <span class="badge fs-7 {% if booking.status == 'pending' %}bg-warning{% elif booking.status == 'confirmed' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ booking.status|title }} ({{ booking.payment_status|title }})
+                                    </span>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center py-4">No bookings received yet.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Bookings Made -->
+        <div class="card mb-5 shadow-lg" data-aos="fade-up" data-aos-delay="500">
+            <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center p-4" 
+                 data-bs-toggle="collapse" data-bs-target="#bookingsMade" role="button" aria-expanded="true" aria-controls="bookingsMade">
+                <h2 class="mb-0 fs-4">Your Bookings</h2>
+                <i class="fas fa-chevron-down transition-transform" id="bookingsMadeChevron"></i>
+            </div>
+            <div class="collapse show" id="bookingsMade">
+                <div class="card-body p-4">
+                    <ul class="list-group list-group-flush">
+                        {% for booking in bookings_made %}
+                            <li class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 py-3">
+                                <div>
+                                    <strong class="fs-6">{{ booking.listing.title }}</strong><br>
+                                    <small>{{ booking.start_date|date:"M d, Y" }} to {{ booking.end_date|date:"M d, Y" }} - TSh {{ booking.total_price|floatformat:0|intcomma }}</small>
+                                </div>
+                                <div class="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center">
+                                    <span class="badge fs-7 {% if booking.status == 'pending' %}bg-warning{% elif booking.status == 'confirmed' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ booking.status|title }} ({{ booking.payment_status|title }})
+                                    </span>
+                                    {% if booking.payment_status == 'unpaid' %}
+                                        <a href="{% url 'pay_booking' booking.pk %}" 
+                                           class="btn btn-success btn-sm mt-2 mt-md-0">
+                                            <i class="fas fa-money-check-alt me-1"></i>Pay
+                                        </a>
+                                    {% elif booking.status == 'confirmed' and booking.payment_status == 'paid' and not booking.review.exists %}
+                                        <a href="{% url 'leave_review' booking.pk %}" 
+                                           class="btn btn-info btn-sm mt-2 mt-md-0">
+                                            <i class="fas fa-star me-1"></i>Review
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-center py-4">You haven’t made any bookings yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .card-header { cursor: pointer; }
+        .card-header:hover { background-color: #e04e53 !important; }
+        .list-group-item { border-left: none; border-right: none; }
+        .badge { font-size: 0.85rem; padding: 0.5em 1em; }
+        .transition-transform { transition: transform 0.3s ease; }
+        #ownedListings.show ~ .card-header #ownedListingsChevron,
+        #bookingsReceived.show ~ .card-header #bookingsReceivedChevron,
+        #bookingsMade.show ~ .card-header #bookingsMadeChevron { transform: rotate(180deg); }
+    </style>
 {% endblock %}

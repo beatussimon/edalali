@@ -1,28 +1,55 @@
 {% extends 'core/base.html' %}
 {% block title %}Book {{ listing.title }}{% endblock %}
 {% block content %}
-    <h1>Book {{ listing.title }}</h1>
-    {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
-    {% endif %}
-    <h3>Available Dates</h3>
-    <ul>
-        {% for avail in availability %}
-            <li>{{ avail.start_date }} to {{ avail.end_date }}</li>
-        {% empty %}
-            <li>No availability set yet.</li>
-        {% endfor %}
-    </ul>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Start Date</label>
-            <input type="date" name="start_date" class="form-control" required>
+    <section class="container py-5" data-aos="fade-up">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h1 class="fs-3 fw-bold mb-0">Book {{ listing.title }}</h1>
+                    </div>
+                    <div class="card-body p-4 p-md-5">
+                        <div class="mb-4">
+                            <h3 class="fs-5 fw-semibold">Available Dates</h3>
+                            {% if availability %}
+                                <ul class="list-group list-group-flush">
+                                    {% for avail in availability %}
+                                        <li class="list-group-item">{{ avail.start_date|date:"M d, Y" }} to {{ avail.end_date|date:"M d, Y" }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted">No availability set yet. Contact the lister for details.</p>
+                            {% endif %}
+                        </div>
+                        <form method="POST" class="needs-validation" novalidate>
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="start_date" class="form-label fw-medium">Start Date</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="end_date" class="form-label fw-medium">End Date</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 mt-4">Confirm Booking</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">End Date</label>
-            <input type="date" name="end_date" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Confirm Booking</button>
-    </form>
+    </section>
+
+    <script>
+        document.querySelectorAll('.needs-validation').forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    </script>
 {% endblock %}

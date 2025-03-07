@@ -1,11 +1,23 @@
 {% extends 'core/base.html' %}
 {% block title %}Pay for Booking{% endblock %}
 {% block content %}
-    <h1>Pay for {{ booking.listing.title }}</h1>
-    <p><strong>Dates:</strong> {{ booking.start_date }} to {{ booking.end_date }}</p>
-    <p><strong>Total Price:</strong> ${{ booking.total_price }}</p>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-success">Simulate Payment (Mark as Paid)</button>
-    </form>
+    <section class="container py-5" data-aos="fade-up">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h1 class="fs-3 fw-bold mb-0">Pay for {{ booking.listing.title }}</h1>
+                    </div>
+                    <div class="card-body p-4 p-md-5 text-center">
+                        <p class="fs-5 mb-3"><strong>Dates:</strong> {{ booking.start_date|date:"M d, Y" }} to {{ booking.end_date|date:"M d, Y" }}</p>
+                        <p class="fs-4 fw-semibold mb-4"><strong>Total Price:</strong> TSh {{ booking.total_price|floatformat:0|intcomma }}</p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success w-100">Confirm Payment</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}
