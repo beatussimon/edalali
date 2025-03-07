@@ -1,46 +1,66 @@
 {% extends 'core/base.html' %}
 {% block title %}Create Listing{% endblock %}
 {% block content %}
-    <h1>Create a New Listing</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label">Title</label>
-            <input type="text" name="title" class="form-control" required>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4">
+                <h2 class="text-center mb-4">Create a New Listing</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select" required>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rental Type</label>
+                        <select name="rental_type" class="form-select" required>
+                            <option value="property">Property</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="service">Service</option>
+                            <option value="package">Package</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price</label>
+                        <input type="number" name="price" step="0.01" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pricing Unit</label>
+                        <select name="pricing_unit" class="form-select" required>
+                            <option value="hour">Per Hour</option>
+                            <option value="day">Per Day</option>
+                            <option value="week">Per Week</option>
+                            <option value="month">Per Month</option>
+                            <option value="year">Per Year</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Location</label>
+                        <input type="text" name="location" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Images</label>
+                        <input type="file" name="images" class="form-control" multiple>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="instant_book" class="form-check-input">
+                        <label class="form-check-label">Enable Instant Booking</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Create Listing</button>
+                </form>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Description</label>
-            <textarea name="description" class="form-control" required></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Category</label>
-            <select name="category" class="form-select" required>
-                {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Rental Type</label>
-            <select name="rental_type" class="form-select" required>
-                <option value="property">Property</option>
-                <option value="equipment">Equipment</option>
-                <option value="service">Service</option>
-                <option value="package">Package</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Price per Day</label>
-            <input type="number" name="price_per_day" step="0.01" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Location</label>
-            <input type="text" name="location" class="form-control" required>
-        </div>
-        <div class="form-check mb-3">
-            <input type="checkbox" name="instant_book" class="form-check-input">
-            <label class="form-check-label">Enable Instant Booking</label>
-        </div>
-        <button type="submit" class="btn btn-primary">Create Listing</button>
-    </form>
+    </div>
 {% endblock %}

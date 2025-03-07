@@ -1,22 +1,30 @@
 {% extends 'core/base.html' %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-    <h1>Dashboard</h1>
-    <h3>Welcome, {{ user.email }}</h3>
-    <p><strong>User Type:</strong> {{ profile.user_type|title }}</p>
-    <p><strong>Phone:</strong> {{ profile.phone_number|default:'Not set' }}</p>
-    <p><strong>Address:</strong> {{ profile.address|default:'Not set' }}</p>
+    <h1 class="mb-4">Dashboard</h1>
+    <div class="card p-4 mb-4">
+        <h3>Welcome, {{ user.username }}</h3>
+        <p><strong>User Type:</strong> {{ profile.user_type|title }}</p>
+        <p><strong>Phone:</strong> {{ profile.phone_number|default:'Not set' }}</p>
+        <p><strong>Address:</strong> {{ profile.address|default:'Not set' }}</p>
+        <a href="{% url 'profile_setup' %}" class="btn btn-secondary">Edit Profile</a>
+        <a href="{% url 'messages' %}" class="btn btn-info ms-2">View Messages</a>
+    </div>
 
     {% if profile.user_type == 'business' %}
         <h2>Your Listings</h2>
-        <div class="row">
+        <div class="row mb-4">
             {% for listing in owned_listings %}
                 <div class="col-md-4">
                     <div class="card mb-4">
+                        {% if listing.images.all %}
+                            <img src="{{ listing.images.first.image.url }}" class="card-img-top" alt="{{ listing.title }}">
+                        {% endif %}
                         <div class="card-body">
                             <h5 class="card-title">{{ listing.title }}</h5>
-                            <p><strong>${{ listing.price_per_day }}/day</strong></p>
+                            <p><strong>${{ listing.price }} {{ listing.pricing_unit }}</strong></p>
                             <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary">View</a>
+                            <a href="{% url 'set_availability' listing.pk %}" class="btn btn-secondary mt-2">Set Availability</a>
                         </div>
                     </div>
                 </div>
@@ -25,11 +33,36 @@
             {% endfor %}
         </div>
         <h2>Bookings Received</h2>
-        <p><strong>Total Revenue:</strong> ${{ total_revenue }}</p>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Total Revenue</h5>
+                        <p class="card-text">${{ total_revenue }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Total Bookings</h5>
+                        <p class="card-text">{{ total_bookings }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Pending Bookings</h5>
+                        <p class="card-text">{{ pending_bookings }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <ul class="list-group mb-4">
             {% for booking in bookings_received %}
                 <li class="list-group-item">
-                    {{ booking.listing.title }} - {{ booking.renter.email }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }})
+                    {{ booking.listing.title }} - {{ booking.renter.username }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }} - {{ booking.payment_status }})
                 </li>
             {% empty %}
                 <li class="list-group-item">No bookings received yet.</li>
@@ -41,7 +74,12 @@
     <ul class="list-group mb-4">
         {% for booking in bookings_made %}
             <li class="list-group-item">
-                {{ booking.listing.title }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }})
+                {{ booking.listing.title }} - {{ booking.start_date }} to {{ booking.end_date }} - ${{ booking.total_price }} ({{ booking.status }} - {{ booking.payment_status }})
+                {% if booking.payment_status == 'unpaid' %}
+                    <a href="{% url 'pay_booking' booking.pk %}" class="btn btn-sm btn-success ms-2">Pay Now</a>
+                {% elif booking.status == 'confirmed' and booking.payment_status == 'paid' and not booking.review.exists %}
+                    <a href="{% url 'leave_review' booking.pk %}" class="btn btn-sm btn-info ms-2">Leave Review</a>
+                {% endif %}
             </li>
         {% empty %}
             <li class="list-group-item">You haven’t made any bookings yet.</li>

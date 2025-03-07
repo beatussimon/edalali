@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+    <h1>Your Messages</h1>
+    <h2>Sent Messages</h2>
+    <ul class="list-group mb-4">
+        {% for message in sent_messages %}
+            <li class="list-group-item">
+                To {{ message.recipient.email }} about {{ message.listing.title }}: {{ message.content }} ({{ message.created_at }})
+            </li>
+        {% empty %}
+            <li class="list-group-item">No sent messages.</li>
+        {% endfor %}
+    </ul>
+    <h2>Received Messages</h2>
+    <ul class="list-group mb-4">
+        {% for message in received_messages %}
+            <li class="list-group-item {% if not message.is_read %}fw-bold{% endif %}">
+                From {{ message.sender.email }} about {{ message.listing.title }}: {{ message.content }} ({{ message.created_at }})
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

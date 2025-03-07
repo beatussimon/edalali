@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% block title %}Review {{ booking.listing.title }}{% endblock %}
+{% block content %}
+    <h1>Leave a Review for {{ booking.listing.title }}</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Rating (1-5)</label>
+            <select name="rating" class="form-select" required>
+                {% for i in "12345" %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Comment</label>
+            <textarea name="comment" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+    </form>
+{% endblock %}

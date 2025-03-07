@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% block title %}Message about {{ listing.title }}{% endblock %}
+{% block content %}
+    <h1>Send a Message about {{ listing.title }}</h1>
+    <p><strong>To:</strong> {{ listing.owner.email }}</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Message</label>
+            <textarea name="content" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+{% endblock %}

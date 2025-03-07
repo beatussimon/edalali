@@ -22,14 +22,21 @@ class Listing(models.Model):
         ('service', 'Service'),
         ('package', 'Package'),
     )
+    PRICING_UNITS = (
+        ('hour', 'Per Hour'),
+        ('day', 'Per Day'),
+        ('week', 'Per Week'),
+        ('month', 'Per Month'),
+        ('year', 'Per Year'),
+    )
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     rental_type = models.CharField(max_length=20, choices=RENTAL_TYPES)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listings')
-    price_per_day = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    price_per_week = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    pricing_unit = models.CharField(max_length=20, choices=PRICING_UNITS, default='day')
     location = models.CharField(max_length=200)
     is_available = models.BooleanField(default=True)
     instant_book = models.BooleanField(default=False)
@@ -59,12 +66,18 @@ class Booking(models.Model):
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled'),
     )
+    PAYMENT_STATUS = (
+        ('unpaid', 'Unpaid'),
+        ('paid', 'Paid'),
+        ('refunded', 'Refunded'),
+    )
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='bookings')
     renter = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     start_date = models.DateField()
     end_date = models.DateField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='unpaid')
     created_at = models.DateTimeField(auto_now_add=True)
 
 class Profile(models.Model):
@@ -77,3 +90,23 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=15, blank=True)
     address = models.TextField(blank=True)
     is_verified = models.BooleanField(default=False)
+
+class Review(models.Model):
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='review')
+    rating = models.IntegerField(validators=[MinValueValidator(1)], choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review for {self.booking.listing.title} by {self.booking.renter.email}"
+
+class Message(models.Model):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='messages')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"From {self.sender.email} to {self.recipient.email} about {self.listing.title}"

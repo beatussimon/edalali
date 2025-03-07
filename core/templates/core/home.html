@@ -1,21 +1,81 @@
 {% extends 'core/base.html' %}
 {% block title %}Home{% endblock %}
 {% block content %}
-    <h1>Welcome to Edalali</h1>
-    <p>Find or rent anything, anywhere, anytime.</p>
-    <h2>Featured Listings</h2>
-    <div class="row">
-        {% for listing in featured_listings %}
+    <!-- Hero Section -->
+    <div class="bg-primary text-white text-center py-5 mb-5" style="background: linear-gradient(135deg, #007bff, #0056b3);">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Welcome to Edalali</h1>
+            <p class="lead mb-4">Rent anything, anytime, anywhere—your ultimate rental marketplace.</p>
+            <a href="{% url 'listing_list' %}" class="btn btn-light btn-lg">Explore Listings</a>
+        </div>
+    </div>
+
+    <!-- Value Proposition -->
+    <div class="container text-center mb-5">
+        <h2 class="mb-4">Why Choose Edalali?</h2>
+        <div class="row">
             <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ listing.title }}</h5>
-                        <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
-                        <p><strong>${{ listing.price_per_day }}/day</strong></p>
-                        <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary">View Details</a>
-                    </div>
+                <div class="card p-3">
+                    <h5 class="card-title">Wide Variety</h5>
+                    <p class="card-text">From properties to equipment, find it all in one place.</p>
                 </div>
             </div>
-        {% endfor %}
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h5 class="card-title">Flexible Pricing</h5>
+                    <p class="card-text">Rent by the hour, day, week, month, or year.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h5 class="card-title">Easy Booking</h5>
+                    <p class="card-text">Instant bookings or message listers directly.</p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Featured Listings Preview -->
+    <div class="container">
+        <h2 class="text-center mb-4">Featured Listings</h2>
+        <div class="row">
+            {% for listing in featured_listings %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if listing.images.all %}
+                            <img src="{{ listing.images.first.image.url }}" class="card-img-top" alt="{{ listing.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-secondary" style="height: 200px;"></div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ listing.title }}</h5>
+                            <p class="card-text">{{ listing.description|truncatewords:15 }}</p>
+                            <p><strong>${{ listing.price }} {{ listing.pricing_unit }}</strong></p>
+                            <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center">No featured listings yet. Check back soon!</p>
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <a href="{% url 'listing_list' %}" class="btn btn-outline-primary">See All Listings</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p>&copy; 2025 Edalali. All rights reserved.</p>
+            <a href="{% url 'listing_list' %}" class="text-white">Listings</a> |
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="text-white">Dashboard</a> |
+                <a href="{% url 'logout' %}" class="text-white">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="text-white">Login</a> |
+                <a href="{% url 'signup' %}" class="text-white">Sign Up</a>
+            {% endif %}
+        </div>
+    </footer>
 {% endblock %}

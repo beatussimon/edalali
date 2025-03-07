@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% block title %}Pay for Booking{% endblock %}
+{% block content %}
+    <h1>Pay for {{ booking.listing.title }}</h1>
+    <p><strong>Dates:</strong> {{ booking.start_date }} to {{ booking.end_date }}</p>
+    <p><strong>Total Price:</strong> ${{ booking.total_price }}</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Simulate Payment (Mark as Paid)</button>
+    </form>
+{% endblock %}

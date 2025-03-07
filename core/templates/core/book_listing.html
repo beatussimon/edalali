@@ -2,6 +2,17 @@
 {% block title %}Book {{ listing.title }}{% endblock %}
 {% block content %}
     <h1>Book {{ listing.title }}</h1>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <h3>Available Dates</h3>
+    <ul>
+        {% for avail in availability %}
+            <li>{{ avail.start_date }} to {{ avail.end_date }}</li>
+        {% empty %}
+            <li>No availability set yet.</li>
+        {% endfor %}
+    </ul>
     <form method="POST">
         {% csrf_token %}
         <div class="mb-3">

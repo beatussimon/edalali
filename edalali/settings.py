@@ -3,8 +3,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security note: In production, replace '*' with specific hostnames
 ALLOWED_HOSTS = ['*']
+DEBUG = True
+SECRET_KEY = 'your-secret-key'  # Replace with a secure key in production
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -13,13 +14,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'crispy_forms',
-    'core',  # Ensure this app exists and is properly configured
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -30,24 +26,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',  # Required for allauth
 ]
 
-# Ensure ROOT_URLCONF points to the correct URL configuration module
-ROOT_URLCONF = 'edalali.urls'  # Adjust 'edalali' to match your project name
-
-SITE_ID = 1
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-]
-LOGIN_REDIRECT_URL = '/dashboard/'
-ACCOUNT_SIGNUP_REDIRECT_URL = '/profile/setup/'
-ACCOUNT_EMAIL_REQUIRED = True
-# Removed deprecated ACCOUNT_AUTHENTICATION_METHOD; use modern settings
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/accounts/login/'
-ACCOUNT_USERNAME_REQUIRED = False
+ROOT_URLCONF = 'edalali.urls'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -61,7 +42,7 @@ DATABASES = {
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Ensure this directory exists
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,28 +50,22 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                # Add allauth context processors if needed
-                'allauth.account.context_processors.account',
-                'allauth.socialaccount.context_processors.socialaccount',
             ],
         },
     },
 ]
 
-# Static files configuration
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']  # Ensure this directory exists
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # For collectstatic in production
-
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'  # Ensure this directory exists
+MEDIA_ROOT = BASE_DIR / 'media'
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Security settings (optional but recommended)
-SECURE_SSL_REDIRECT = False  # Set to True in production with HTTPS
-SESSION_COOKIE_SECURE = False  # Set to True in production with HTTPS
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
